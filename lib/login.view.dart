@@ -1,16 +1,5 @@
 import 'package:flutter/material.dart';
-
-
-class Login extends StatelessWidget {
-  const Login({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const LoginPage(),
-    );
-  }
-}
+import 'login.controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -20,8 +9,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController _controladorNome = TextEditingController();
-  TextEditingController _controladorEmail = TextEditingController();
+  final LoginController _controller = LoginController();
 
   TextField criarCaixaEdicao({
     required TextEditingController controlador,
@@ -40,8 +28,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _controladorNome.dispose();
-    _controladorEmail.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -55,26 +42,25 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             criarCaixaEdicao(
-              controlador: _controladorNome,
+              controlador: _controller.nomeController,
               rotulo: 'Nome',
               dica: 'Digite seu nome',
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             criarCaixaEdicao(
-              controlador: _controladorEmail,
+              controlador: _controller.emailController,
               rotulo: 'Email',
               dica: 'Digite seu email',
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                _controller.confirmarLogin();
+              },
+              child: const Text('Confirmar'),
+            ),
           ],
         ),
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {});
-        },
-        tooltip: 'Confirmar',
-        child: const Icon(Icons.add),
       ),
     );
   }
