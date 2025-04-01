@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.only(top: 100.0),
           child: Center(
             child: Text(
-              'Home Page',
+              'Olá, mundo!',
               style: TextStyle(
                 fontSize: 35.0,
                 fontWeight: FontWeight.bold,

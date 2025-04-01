@@ -1,46 +1,68 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Carregar propriedades do Flutter de forma segura
+val localProperties = Properties().apply {
+    runCatching {
+        load(FileInputStream(rootProject.file("local.properties")))
+    }
+}
+val flutterCompileSdk = localProperties["flutter.compileSdkVersion"]?.toString()?.toInt() ?: 34
+val flutterTargetSdk = localProperties["flutter.targetSdkVersion"]?.toString()?.toInt() ?: 34
+val flutterVersionCode = localProperties["flutter.versionCode"]?.toString()?.toInt() ?: 1
+val flutterVersionName = localProperties["flutter.versionName"]?.toString() ?: "1.0.0"
+
 android {
     namespace = "br.com.otavioms.shop_ar"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = flutterCompileSdk
     ndkVersion = "27.0.12077973"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = "17"
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "br.com.otavioms.shop_ar"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 24
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        targetSdk = flutterTargetSdk
+        versionCode = flutterVersionCode
+        versionName = flutterVersionName
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("keystore.jks") // Ajuste conforme seu keystore real
+            storePassword = "senha"
+            keyAlias = "alias"
+            keyPassword = "senha"
+        }
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        debug {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
 
 dependencies {
-    implementation("com.google.ar:core:1.33.0")
+    implementation("com.google.ar:core:1.39.0")
 }
 
 flutter {
