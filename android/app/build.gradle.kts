@@ -20,7 +20,7 @@ val flutterVersionName = localProperties["flutter.versionName"]?.toString() ?: "
 
 android {
     namespace = "br.com.otavioms.shop_ar"
-    compileSdk = flutterCompileSdk
+    compileSdk = 35
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -52,7 +52,8 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {

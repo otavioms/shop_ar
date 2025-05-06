@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:shop_ar/Pages/home_page.dart';
+import 'Pages/catalog_page.dart';
 import 'Pages/login_page.dart';
 
 void main() {
