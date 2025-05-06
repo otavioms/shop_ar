@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../app_colors.dart';
 import '../Controllers/login_controller.dart';
-import 'home_page.dart';
+import 'main_screen.dart'; // Importar a nova tela MainScreen em vez de HomePage
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.accent, // Cor de fundo (não é roxo)
+      backgroundColor: AppColors.accent,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(top: 100.0),
@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
                   titulo,
                   style: GoogleFonts.poppins(
                     fontSize: 26.0,
-                    color: AppColors.background, // Cor de texto
+                    color: AppColors.background,
                   ),
                 ),
                 Padding(
@@ -53,24 +53,22 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color:
-                              AppColors
-                                  .primary, // Cor desejada para o estado padrão
+                          color: AppColors.primary,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.primary,
-                        ), // Cor primária
+                        ),
                       ),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.primary,
-                        ), // Cor primária
+                        ),
                       ),
                       labelText: 'E-mail',
                       labelStyle: GoogleFonts.poppins(
-                        color: AppColors.background, // Cor de texto
+                        color: AppColors.background,
                       ),
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -95,30 +93,28 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color:
-                              AppColors
-                                  .primary, // Cor desejada para o estado padrão
+                          color: AppColors.primary,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.primary,
-                        ), // Cor primária
+                        ),
                       ),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: AppColors.primary,
-                        ), // Cor primária
+                        ),
                       ),
                       labelStyle: GoogleFonts.poppins(
-                        color: AppColors.background, // Cor de texto
+                        color: AppColors.background,
                       ),
                       labelText: 'Senha',
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Informe sua senha!';
-                      } else if (value.length < 8) {
+                      } else if (value.length < 6) {
                         return 'Sua senha deve ter no mínimo 8 caracteres';
                       }
                       return null;
@@ -129,20 +125,22 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.all(24.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_controller.confirmarLogin()) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Login inválido')),
-                        );
+                      if (formKey.currentState!.validate()) { // Adicionar validação do formulário
+                        if (_controller.confirmarLogin()) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => MainScreen()),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Login inválido')),
+                          );
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary, // Cor primária
-                      foregroundColor: AppColors.background, // Define a cor dos ícones e textos
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.background,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -157,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                             actionButton,
                             style: GoogleFonts.poppins(
                               fontSize: 20.0,
-                              color: AppColors.background, // Cor de texto
+                              color: AppColors.background,
                             ),
                           ),
                         ),
@@ -171,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                     toggleButton,
                     style: GoogleFonts.poppins(
                       color: AppColors.primary,
-                    ), // Cor primária
+                    ),
                   ),
                 ),
               ],
