@@ -13,135 +13,153 @@ class CatalogPage extends StatelessWidget {
       'imagem': 'assets/images/cadeira.png',
       'modelo': 'assets/models/cadeira.glb',
       'preco': 'RS 299,90',
-      'descricao': 'Cadeira ergonômica com design moderno e confortável.',
+      'descricao': 'Cadeira ergonômica com design moderno e confortável. Ideal para escritórios e salas de jantar, proporciona conforto e estilo ao ambiente.',
+      'especificacao': 'Material: Madeira e tecido\nAltura: 90cm\nLargura: 45cm\nProfundidade: 50cm\nPeso: 7kg',
     },
     {
       'nome': 'Sofá 3 Lugares',
       'imagem': 'assets/images/sofa.png',
       'modelo': 'assets/models/sofa.glb',
       'preco': 'RS 1.299,90',
-      'descricao': 'Sofá confortável para sua sala com tecido premium.',
+      'descricao': 'Sofá espaçoso e confortável para até 3 pessoas. Revestimento em tecido premium, perfeito para salas de estar modernas.',
+      'especificacao': 'Material: Madeira, espuma e tecido\nAltura: 85cm\nLargura: 200cm\nProfundidade: 90cm\nPeso: 35kg',
     },
     {
-      'nome': 'Mesa de Jantar',
-      'imagem': 'assets/images/mesa.png',
-      'modelo': 'assets/models/mesa.glb',
-      'preco': 'RS 899,90',
-      'descricao': 'Mesa de jantar para 6 pessoas, feita em madeira maciça.',
+      'nome': 'Armário Moderno',
+      'imagem': 'assets/images/armario.png',
+      'modelo': 'assets/models/armario.glb',
+      'preco': 'RS 1.100,00',
+      'descricao': 'Armário com design contemporâneo, portas de correr e amplo espaço interno. Ideal para quartos e escritórios.',
+      'especificacao': 'Material: MDF\nAltura: 180cm\nLargura: 120cm\nProfundidade: 50cm\nPeso: 60kg',
     },
     {
-      'nome': 'Estante Modular',
-      'imagem': 'assets/images/estante.png',
-      'modelo': 'assets/models/estante.glb',
-      'preco': 'RS 599,90',
-      'descricao': 'Estante versátil para livros e decoração.',
+      'nome': 'Prateleira - Soft',
+      'imagem': 'assets/images/prateleira.png',
+      'modelo': 'assets/models/prateleira.glb',
+      'preco': 'RS 350,00',
+      'descricao': 'Prateleira minimalista, perfeita para organizar livros e objetos decorativos. Acabamento suave e resistente.',
+      'especificacao': 'Material: Madeira\nAltura: 30cm\nLargura: 100cm\nProfundidade: 25cm\nPeso: 4kg',
+    },
+    {
+      'nome': 'Poltrona - King',
+      'imagem': 'assets/images/poltrona.png',
+      'modelo': 'assets/models/poltrona.glb',
+      'preco': 'RS 2.300,00',
+      'descricao': 'Poltrona de luxo com design clássico, estofamento macio e apoio para braços. Ideal para leitura e relaxamento.',
+      'especificacao': 'Material: Madeira, espuma e couro sintético\nAltura: 100cm\nLargura: 80cm\nProfundidade: 90cm\nPeso: 25kg',
     },
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
           'Catálogo de Móveis',
           style: GoogleFonts.poppins(
-            color: AppColors.background,
+            color: AppColors.primary,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: AppColors.primary,
-        elevation: 2,
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        iconTheme: IconThemeData(color: AppColors.primary),
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.75,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+      body: Center(
+        child: GridView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.75,
+            crossAxisSpacing: 28,
+            mainAxisSpacing: 28,
+          ),
+          itemCount: moveis.length,
+          itemBuilder: (context, index) {
+            final movel = moveis[index];
+            return _buildMovelCard(context, movel);
+          },
         ),
-        itemCount: moveis.length,
-        itemBuilder: (context, index) {
-          final movel = moveis[index];
-          return _buildMovelCard(context, movel);
-        },
       ),
     );
   }
 
   Widget _buildMovelCard(BuildContext context, Map<String, dynamic> movel) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.18),
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Imagem do móvel (com placeholder)
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              ),
-              width: double.infinity,
-              child: Icon(
-                Icons.chair,
-                size: 80,
-                color: AppColors.primary,
-              ),
-              // Em produção você usaria:
-              // Image.asset(
-              //   movel['imagem']!,
-              //   fit: BoxFit.cover,
-              // ),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Image.asset(
+              movel['imagem'],
+              height: 80,
+              fit: BoxFit.contain,
             ),
           ),
+          const SizedBox(height: 12),
+          Text(
+            movel['nome'],
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: AppColors.primary,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            movel['preco'],
+            style: GoogleFonts.poppins(
+              color: AppColors.accent,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
+          const Spacer(),
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  movel['nome'],
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  movel['preco'],
-                  style: GoogleFonts.poppins(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ArViewPage(
-                          modeloPath: movel['modelo'],
-                          nomeMovel: movel['nome'],
-                        ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ArViewPage(
+                        modeloPath: movel['modelo'],
+                        nomeMovel: movel['nome'],
                       ),
-                    );
-                  },
-                  icon: const Icon(Icons.view_in_ar, size: 16),
-                  label: const Text('Ver em AR'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.background,
-                    minimumSize: const Size(double.infinity, 30),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    textStyle: GoogleFonts.poppins(fontSize: 12),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.view_in_ar, size: 18),
+                label: const Text('Ver em AR'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  textStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
                 ),
-              ],
+              ),
             ),
           ),
         ],
