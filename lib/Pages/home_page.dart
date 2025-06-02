@@ -12,10 +12,34 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double cardWidth = MediaQuery.of(context).size.width * 0.9;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth - 64) / 2;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -132,8 +156,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Wrap(
+                      spacing: 24,
+                      runSpacing: 24,
+                      alignment: WrapAlignment.center,
                       children: [
                         _buildNovidadeCard(
                           context,
@@ -141,17 +167,113 @@ class _HomePageState extends State<HomePage> {
                           'Prateleira - Soft',
                           'R\$ 350,00',
                           'Prateleira minimalista e resistente.',
+                          cardWidth,
                         ),
-                        const SizedBox(width: 24),
                         _buildNovidadeCard(
                           context,
                           'assets/images/poltrona.png',
                           'Poltrona - King',
                           'R\$ 2.300,00',
                           'Poltrona de luxo para relaxamento.',
+                          cardWidth,
                         ),
                       ],
                     ),
+                    const SizedBox(height: 40),
+                    // Nova seção de Categorias em Destaque
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Categorias em Destaque',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Ver todas',
+                            style: GoogleFonts.poppins(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 180,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          _buildCategoryCard(
+                            context,
+                            'Sala de Estar',
+                            'assets/images/sofa.png',
+                            AppColors.primary.withOpacity(0.1),
+                          ),
+                          _buildCategoryCard(
+                            context,
+                            'Quarto',
+                            'assets/images/armario.png',
+                            AppColors.accent.withOpacity(0.1),
+                          ),
+                          _buildCategoryCard(
+                            context,
+                            'Escritório',
+                            'assets/images/cadeira.png',
+                            Colors.purple.withOpacity(0.1),
+                          ),
+                          _buildCategoryCard(
+                            context,
+                            'Decoração',
+                            'assets/images/prateleira.png',
+                            Colors.orange.withOpacity(0.1),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    // Decorative element at the bottom
+                    Center(
+                      child: AnimatedBuilder(
+                        animation: _animation,
+                        builder: (context, child) {
+                          return Transform.translate(
+                            offset: Offset(0, 10 * _animation.value),
+                            child: Container(
+                              width: 200,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.primary.withOpacity(0.5),
+                                    AppColors.primary,
+                                    AppColors.primary.withOpacity(0.5),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Text(
+                        'Deslize para ver mais',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white.withOpacity(0.7),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
@@ -162,7 +284,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildNovidadeCard(BuildContext context, String image, String title, String price, String description) {
+  Widget _buildNovidadeCard(BuildContext context, String image, String title, String price, String description, double width) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -178,8 +300,8 @@ class _HomePageState extends State<HomePage> {
         );
       },
       child: Container(
-        width: 170,
-        height: 210,
+        width: width,
+        height: 320,
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(24),
@@ -192,45 +314,101 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(image, height: 90),
-              const SizedBox(height: 12),
+              Image.asset(image, height: 140),
+              const SizedBox(height: 20),
               Text(
                 title,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 18,
                   color: AppColors.primary,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 12),
               Text(
                 price,
                 style: GoogleFonts.poppins(
                   color: AppColors.accent,
                   fontWeight: FontWeight.w600,
-                  fontSize: 15,
+                  fontSize: 18,
                 ),
               ),
-              const SizedBox(height: 10),
-              Text(
-                description,
-                style: GoogleFonts.poppins(
-                  color: AppColors.textPrimary,
-                  fontSize: 13,
+              const SizedBox(height: 16),
+              Expanded(
+                child: Text(
+                  description,
+                  style: GoogleFonts.poppins(
+                    color: AppColors.textPrimary,
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryCard(BuildContext context, String title, String image, Color backgroundColor) {
+    return Container(
+      width: 140,
+      margin: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Image.asset(
+              image,
+              height: 40,
+              width: 40,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.primary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

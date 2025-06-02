@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../app_colors.dart';
 import 'ar_view_page.dart';
+import 'product_detail_page.dart';
 
 class CatalogPage extends StatelessWidget {
   const CatalogPage({super.key});
@@ -86,83 +87,100 @@ class CatalogPage extends StatelessWidget {
   }
 
   Widget _buildMovelCard(BuildContext context, Map<String, dynamic> movel) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.18),
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(18),
-            child: Image.asset(
-              movel['imagem'],
-              height: 80,
-              fit: BoxFit.contain,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductDetailPage(
+              image: movel['imagem'],
+              title: movel['nome'],
+              price: movel['preco'],
+              description: movel['descricao'],
+              especificacao: movel['especificacao'],
+              modeloPath: movel['modelo'],
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            movel['nome'],
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
-              color: AppColors.primary,
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.18),
+              blurRadius: 18,
+              offset: Offset(0, 8),
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            movel['preco'],
-            style: GoogleFonts.poppins(
-              color: AppColors.accent,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 16),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Image.asset(
+                movel['imagem'],
+                height: 80,
+                fit: BoxFit.contain,
+              ),
             ),
-          ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ArViewPage(
-                        modeloPath: movel['modelo'],
-                        nomeMovel: movel['nome'],
+            const SizedBox(height: 12),
+            Text(
+              movel['nome'],
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: AppColors.primary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              movel['preco'],
+              style: GoogleFonts.poppins(
+                color: AppColors.accent,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ArViewPage(
+                          modeloPath: movel['modelo'],
+                          nomeMovel: movel['nome'],
+                        ),
                       ),
+                    );
+                  },
+                  icon: const Icon(Icons.view_in_ar, size: 18),
+                  label: const Text('Ver em AR'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  );
-                },
-                icon: const Icon(Icons.view_in_ar, size: 18),
-                label: const Text('Ver em AR'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    textStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
                   ),
-                  textStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

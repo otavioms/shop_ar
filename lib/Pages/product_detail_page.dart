@@ -149,28 +149,6 @@ class ProductDetailPage extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      SizedBox(
-                        height: 48,
-                        child: Builder(
-                          builder: (context) => ElevatedButton(
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Item adicionado ao carrinho!')),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
-                              minimumSize: const Size(120, 48),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              textStyle: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-                            ),
-                            child: const Text('Adicionar'),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -186,6 +164,7 @@ class ProductDetailPage extends StatelessWidget {
                         color: AppColors.primary,
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      indicatorSize: TabBarIndicatorSize.tab,
                       tabs: [
                         Tab(child: Text('Descrição', style: GoogleFonts.poppins(fontWeight: FontWeight.bold))),
                         Tab(child: Text('Especificação', style: GoogleFonts.poppins(fontWeight: FontWeight.bold))),
