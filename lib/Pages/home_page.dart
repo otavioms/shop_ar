@@ -103,6 +103,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               title: 'Sofá 3 Lugares',
                               price: 'R\$ 1.299,90',
                               description: 'Sofá confortável para sua sala com tecido premium.',
+                              modeloPath: 'assets/models/sofa.glb',
                             ),
                           ),
                         );
@@ -167,6 +168,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           'Prateleira - Soft',
                           'R\$ 350,00',
                           'Prateleira minimalista e resistente.',
+                          'assets/models/prateleira.glb',
                           cardWidth,
                         ),
                         _buildNovidadeCard(
@@ -175,6 +177,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           'Poltrona - King',
                           'R\$ 2.300,00',
                           'Poltrona de luxo para relaxamento.',
+                          'assets/models/poltrona.glb',
                           cardWidth,
                         ),
                       ],
@@ -284,7 +287,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget _buildNovidadeCard(BuildContext context, String image, String title, String price, String description, double width) {
+  Widget _buildNovidadeCard(BuildContext context, String image, String title, String price, String description, String modeloPath, double width) {
+    final shortTitle = title.split(' ')[0];
+    
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -295,13 +300,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               title: title,
               price: price,
               description: description,
+              modeloPath: modeloPath,
             ),
           ),
         );
       },
       child: Container(
         width: width,
-        height: 320,
+        height: 220,
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(24),
@@ -314,15 +320,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(image, height: 140),
-              const SizedBox(height: 20),
+              Image.asset(image, height: 100),
+              const SizedBox(height: 16),
               Text(
-                title,
+                shortTitle,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -332,26 +338,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Text(
                 price,
                 style: GoogleFonts.poppins(
                   color: AppColors.accent,
                   fontWeight: FontWeight.w600,
                   fontSize: 18,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: Text(
-                  description,
-                  style: GoogleFonts.poppins(
-                    color: AppColors.textPrimary,
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -411,5 +404,16 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ],
       ),
     );
+  }
+
+  String? _getModeloPathForNovidade(String title) {
+    switch (title) {
+      case 'Prateleira - Soft':
+        return 'assets/models/prateleira.glb';
+      case 'Poltrona - King':
+        return 'assets/models/poltrona.glb';
+      default:
+        return null;
+    }
   }
 }

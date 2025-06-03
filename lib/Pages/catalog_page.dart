@@ -15,7 +15,7 @@ class CatalogPage extends StatelessWidget {
       'modelo': 'assets/models/cadeira.glb',
       'preco': 'RS 299,90',
       'descricao': 'Cadeira ergonômica com design moderno e confortável. Ideal para escritórios e salas de jantar, proporciona conforto e estilo ao ambiente.',
-      'especificacao': 'Material: Madeira e tecido\nAltura: 90cm\nLargura: 45cm\nProfundidade: 50cm\nPeso: 7kg',
+      'especificacao': 'Material: Madeira e tecido\nAltura: 90cm\nLargura: 45cm\nProfundidade: 50cm',
     },
     {
       'nome': 'Sofá 3 Lugares',
@@ -23,7 +23,7 @@ class CatalogPage extends StatelessWidget {
       'modelo': 'assets/models/sofa.glb',
       'preco': 'RS 1.299,90',
       'descricao': 'Sofá espaçoso e confortável para até 3 pessoas. Revestimento em tecido premium, perfeito para salas de estar modernas.',
-      'especificacao': 'Material: Madeira, espuma e tecido\nAltura: 85cm\nLargura: 200cm\nProfundidade: 90cm\nPeso: 35kg',
+      'especificacao': 'Material: Madeira, espuma e tecido\nAltura: 85cm\nLargura: 200cm\nProfundidade: 90cm',
     },
     {
       'nome': 'Armário Moderno',
@@ -31,7 +31,7 @@ class CatalogPage extends StatelessWidget {
       'modelo': 'assets/models/armario.glb',
       'preco': 'RS 1.100,00',
       'descricao': 'Armário com design contemporâneo, portas de correr e amplo espaço interno. Ideal para quartos e escritórios.',
-      'especificacao': 'Material: MDF\nAltura: 180cm\nLargura: 120cm\nProfundidade: 50cm\nPeso: 60kg',
+      'especificacao': 'Material: MDF\nAltura: 180cm\nLargura: 120cm\nProfundidade: 50cm',
     },
     {
       'nome': 'Prateleira - Soft',
@@ -39,7 +39,7 @@ class CatalogPage extends StatelessWidget {
       'modelo': 'assets/models/prateleira.glb',
       'preco': 'RS 350,00',
       'descricao': 'Prateleira minimalista, perfeita para organizar livros e objetos decorativos. Acabamento suave e resistente.',
-      'especificacao': 'Material: Madeira\nAltura: 30cm\nLargura: 100cm\nProfundidade: 25cm\nPeso: 4kg',
+      'especificacao': 'Material: Madeira\nAltura: 30cm\nLargura: 100cm\nProfundidade: 25cm',
     },
     {
       'nome': 'Poltrona - King',
@@ -47,7 +47,7 @@ class CatalogPage extends StatelessWidget {
       'modelo': 'assets/models/poltrona.glb',
       'preco': 'RS 2.300,00',
       'descricao': 'Poltrona de luxo com design clássico, estofamento macio e apoio para braços. Ideal para leitura e relaxamento.',
-      'especificacao': 'Material: Madeira, espuma e couro sintético\nAltura: 100cm\nLargura: 80cm\nProfundidade: 90cm\nPeso: 25kg',
+      'especificacao': 'Material: Madeira, espuma e couro sintético\nAltura: 100cm\nLargura: 80cm\nProfundidade: 90cm',
     },
   ];
 

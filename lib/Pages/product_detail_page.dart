@@ -26,15 +26,15 @@ class ProductDetailPage extends StatelessWidget {
     // Exemplos padrões para cada item
     switch (title) {
       case 'Cadeira Moderna':
-        return 'Material: Madeira e tecido\nAltura: 90cm\nLargura: 45cm\nProfundidade: 50cm\nPeso: 7kg';
+        return '• Material: Madeira e tecido\n• Altura: 90cm\n• Largura: 45cm\n• Profundidade: 50cm';
       case 'Sofá 3 Lugares':
-        return 'Material: Madeira, espuma e tecido\nAltura: 85cm\nLargura: 200cm\nProfundidade: 90cm\nPeso: 35kg';
+        return '• Material: Madeira, espuma e tecido\n• Altura: 85cm\n• Largura: 200cm\n• Profundidade: 90cm';
       case 'Armário Moderno':
-        return 'Material: MDF\nAltura: 180cm\nLargura: 120cm\nProfundidade: 50cm\nPeso: 60kg';
+        return '• Material: MDF\n• Altura: 180cm\n• Largura: 120cm\n• Profundidade: 50cm';
       case 'Prateleira - Soft':
-        return 'Material: Madeira\nAltura: 30cm\nLargura: 100cm\nProfundidade: 25cm\nPeso: 4kg';
+        return '• Material: Madeira\n• Altura: 30cm\n• Largura: 100cm\n• Profundidade: 25cm';
       case 'Poltrona - King':
-        return 'Material: Madeira, espuma e couro sintético\nAltura: 100cm\nLargura: 80cm\nProfundidade: 90cm\nPeso: 25kg';
+        return '• Material: Madeira, espuma e couro sintético\n• Altura: 100cm\n• Largura: 80cm\n• Profundidade: 90cm';
       default:
         return 'Especificação técnica não disponível.';
     }
@@ -186,10 +186,25 @@ class ProductDetailPage extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            getEspecificacao(),
-                            style: GoogleFonts.poppins(
-                              color: AppColors.textPrimary,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: getEspecificacao().split('\n').map((item) {
+                                // Add a bullet point if it's not already there
+                                final formattedItem = item.trim().startsWith('•') ? item.trim() : '• ' + item.trim();
+                                // Only display non-empty lines
+                                if (formattedItem.trim().isEmpty || formattedItem.trim() == '•') return SizedBox.shrink();
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4.0),
+                                  child: Text(
+                                    formattedItem,
+                                    style: GoogleFonts.poppins(
+                                      color: AppColors.textPrimary,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ),
