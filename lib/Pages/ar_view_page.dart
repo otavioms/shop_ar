@@ -22,6 +22,8 @@ class _ArViewPageState extends State<ArViewPage> {
   bool modelPlaced = false;
   bool planeDetected = false;
   vector.Vector3? detectedPlanePosition;
+  bool isArInitialized = false;
+  String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +38,32 @@ class _ArViewPageState extends State<ArViewPage> {
           ArCoreView(
             onArCoreViewCreated: _onArCoreViewCreated,
             enableTapRecognizer: true,
-            enablePlaneRenderer: true, // Habilita renderização de planos detectados
-            enableUpdateListener: true, // Habilita listener para atualizações
+            enablePlaneRenderer: true,
+            enableUpdateListener: true,
           ),
+          if (!isArInitialized)
+            Container(
+              color: Colors.black54,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          if (errorMessage != null)
+            Container(
+              color: Colors.black54,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    errorMessage!,
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
           Positioned(
             bottom: 30,
             left: 0,
@@ -56,11 +81,15 @@ class _ArViewPageState extends State<ArViewPage> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        !planeDetected
+                        errorMessage != null
+                            ? 'Erro: $errorMessage'
+                            : !isArInitialized
+                            ? 'Inicializando AR...'
+                            : !planeDetected
                             ? 'Aponte para o chão até detectar uma superfície'
                             : !modelPlaced
                             ? 'Toque na superfície ou no botão para posicionar'
-                            : 'Cubo posicionado com sucesso',
+                            : 'Móvel posicionado com sucesso',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -70,9 +99,9 @@ class _ArViewPageState extends State<ArViewPage> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: planeDetected && !modelPlaced ? _placeCube : null,
+                    onPressed: (isArInitialized && planeDetected && !modelPlaced && errorMessage == null) ? _placeModel : null,
                     child: Text(
-                        modelPlaced ? 'Cubo Posicionado' : 'Posicionar Cubo'
+                        modelPlaced ? 'Móvel Posicionado' : 'Posicionar Móvel'
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -91,135 +120,119 @@ class _ArViewPageState extends State<ArViewPage> {
   }
 
   void _onArCoreViewCreated(ArCoreController controller) {
-    arCoreController = controller;
+    print('AR Core View Created');
+    try {
+      arCoreController = controller;
+      setState(() {
+        isArInitialized = true;
+        errorMessage = null;
+      });
 
-    // Adiciona um listener para quando planos são detectados
-    arCoreController.onPlaneTap = _handlePlaneTap;
+      arCoreController.onPlaneTap = _handlePlaneTap;
+      arCoreController.onPlaneDetected = (ArCorePlane plane) {
+        print('Plane detected: ${plane.type}');
+        if (plane.type == ArCorePlaneType.HORIZONTAL_UPWARD_FACING) {
+          if (!planeDetected) {
+            setState(() {
+              planeDetected = true;
+              if (plane.centerPose != null && plane.centerPose!.translation != null) {
+                detectedPlanePosition = vector.Vector3(
+                    plane.centerPose!.translation!.x,
+                    plane.centerPose!.translation!.y,
+                    plane.centerPose!.translation!.z
+                );
+              }
+            });
 
-    // Adiciona um listener para atualizações de planos
-    arCoreController.onPlaneDetected = (ArCorePlane plane) {
-      // Verifica se o plano detectado é horizontal (como o chão)
-      if (plane.type == ArCorePlaneType.HORIZONTAL_UPWARD_FACING) {
-        if (!planeDetected) {
-          setState(() {
-            planeDetected = true;
-            // Armazena a posição do plano para uso posterior
-            if (plane.centerPose != null && plane.centerPose!.translation != null) {
-              detectedPlanePosition = vector.Vector3(
-                  plane.centerPose!.translation!.x,
-                  plane.centerPose!.translation!.y,
-                  plane.centerPose!.translation!.z
-              );
-            }
-          });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Superfície detectada! Agora você pode posicionar o cubo.'),
-              duration: Duration(seconds: 2),
-            ),
-          );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Superfície detectada! Agora você pode posicionar o móvel.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
         }
-      }
-    };
+      };
+    } catch (e) {
+      print('Erro ao inicializar AR: $e');
+      setState(() {
+        errorMessage = 'Erro ao inicializar AR: $e';
+      });
+    }
   }
 
-  void _placeCube() {
-    if (!modelPlaced && planeDetected) {
+  void _placeModel() {
+    if (!modelPlaced && planeDetected && isArInitialized && errorMessage == null) {
       try {
+        print('Attempting to place model: ${widget.modeloPath}');
         if (detectedPlanePosition != null) {
-          _addCubeOnFloor(detectedPlanePosition!);
+          _addModelOnFloor(detectedPlanePosition!);
         } else {
-          // Fallback para uma posição padrão se não tiver posição do plano
-          _addCubeNode();
+          _addModelNode();
         }
 
         setState(() {
           modelPlaced = true;
         });
       } catch (e) {
-        print('Erro ao posicionar cubo: $e');
+        print('Erro ao posicionar móvel: $e');
+        setState(() {
+          errorMessage = 'Erro ao posicionar o móvel: $e';
+        });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao posicionar o cubo. Tente novamente.')),
+          SnackBar(content: Text('Erro ao posicionar o móvel. Tente novamente.')),
         );
       }
     }
   }
 
-  void _addCubeNode() {
-    // Cria um material com a cor do app
-    final material = ArCoreMaterial(
-      color: AppColors.primary,
-      metallic: 0.5,
-      roughness: 0.4,
-    );
+  void _addModelNode() {
+    try {
+      print('Adding model node with path: ${widget.modeloPath}');
+      final modelNode = ArCoreReferenceNode(
+        name: 'modelo_${widget.nomeMovel}',
+        objectUrl: widget.modeloPath,
+        position: vector.Vector3(0, 0, -1.0),
+        rotation: vector.Vector4(0, 0, 0, 0),
+        scale: vector.Vector3(0.1, 0.1, 0.1), // Reduzindo a escala para 0.1
+      );
 
-    // Cria um cubo com o material
-    final cube = ArCoreCube(
-      materials: [material],
-      size: vector.Vector3(0.5, 0.5, 0.5),
-    );
-
-    // Cria o nó com o cubo - coloca a base no ponto de âncora
-    // O y = -0.25 garante que a base do cubo fique no plano, já que o cubo tem altura 0.5
-    final cubeNode = ArCoreNode(
-      name: 'cubo_${widget.nomeMovel}',
-      shape: cube,
-      position: vector.Vector3(0, -0.25, -1.0),
-      rotation: vector.Vector4(0, 0, 0, 0),
-    );
-
-    // Adiciona o nó à cena
-    arCoreController.addArCoreNodeWithAnchor(cubeNode);
-
-    print('Cubo adicionado com sucesso');
+      arCoreController.addArCoreNodeWithAnchor(modelNode);
+      print('Modelo adicionado com sucesso');
+    } catch (e) {
+      print('Erro ao adicionar modelo: $e');
+      rethrow;
+    }
   }
 
-  void _addCubeOnFloor(vector.Vector3 planePosition) {
-    // Cria um material com a cor do app
-    final material = ArCoreMaterial(
-      color: AppColors.primary,
-      metallic: 0.5,
-      roughness: 0.4,
-    );
+  void _addModelOnFloor(vector.Vector3 planePosition) {
+    try {
+      print('Adding model on floor with path: ${widget.modeloPath}');
+      final modelNode = ArCoreReferenceNode(
+        name: 'modelo_${widget.nomeMovel}',
+        objectUrl: widget.modeloPath,
+        position: vector.Vector3(
+          planePosition.x,
+          planePosition.y,
+          planePosition.z
+        ),
+        rotation: vector.Vector4(0, 0, 0, 0),
+        scale: vector.Vector3(0.1, 0.1, 0.1), // Reduzindo a escala para 0.1
+      );
 
-    // Cria um cubo com o material
-    final cube = ArCoreCube(
-      materials: [material],
-      size: vector.Vector3(0.5, 0.5, 0.5),
-    );
-
-    // Ajustamos o Y para que a base do cubo fique no plano
-    // Como o cubo tem altura 0.5 e o ponto central está no meio,
-    // adicionamos metade da altura (0.25) para elevar o centro
-    // e fazer a base ficar no plano
-    final position = vector.Vector3(
-        planePosition.x,
-        planePosition.y + 0.25, // Posiciona para que a base do cubo fique no chão
-        planePosition.z
-    );
-
-    // Cria o nó com o cubo
-    final cubeNode = ArCoreNode(
-      name: 'cubo_${widget.nomeMovel}',
-      shape: cube,
-      position: position,
-      rotation: vector.Vector4(0, 0, 0, 0),
-    );
-
-    // Adiciona o nó à cena
-    arCoreController.addArCoreNodeWithAnchor(cubeNode);
-
-    print('Cubo adicionado no chão com sucesso');
+      arCoreController.addArCoreNodeWithAnchor(modelNode);
+      print('Modelo adicionado no chão com sucesso');
+    } catch (e) {
+      print('Erro ao adicionar modelo no chão: $e');
+      rethrow;
+    }
   }
 
-  // Função para lidar com toques em planos detectados
   void _handlePlaneTap(List<ArCoreHitTestResult> hits) {
-    if (!modelPlaced && hits.isNotEmpty) {
+    if (!modelPlaced && hits.isNotEmpty && isArInitialized && errorMessage == null) {
       final hit = hits.first;
-      // Verificamos se a pose e a translation não são nulos
       if (hit.pose != null && hit.pose.translation != null) {
-        _addCubeAtHit(hit);
+        _addModelAtHit(hit);
         setState(() {
           modelPlaced = true;
         });
@@ -227,58 +240,40 @@ class _ArViewPageState extends State<ArViewPage> {
     }
   }
 
-  void _addCubeAtHit(ArCoreHitTestResult hit) {
+  void _addModelAtHit(ArCoreHitTestResult hit) {
     try {
-      // Cria um material com a cor do app
-      final material = ArCoreMaterial(
-        color: AppColors.primary,
-        metallic: 0.5,
-        roughness: 0.4,
-      );
-
-      // Cria um cubo com o material
-      final cube = ArCoreCube(
-        materials: [material],
-        size: vector.Vector3(0.5, 0.5, 0.5),
-      );
-
-      // Certifique-se de que hit.pose.translation não é nulo
       if (hit.pose.translation == null) {
-        print('Translation é nulo, não é possível posicionar o cubo');
+        print('Translation é nulo, não é possível posicionar o modelo');
         return;
       }
 
-      // Obtém a posição do ponto tocado
+      print('Adding model at hit with path: ${widget.modeloPath}');
       final hitPosition = hit.pose.translation!;
-
-      // Ajusta a posição Y para que a base do cubo fique exatamente no plano
-      // Como o cubo tem altura 0.5 e o centroide está no meio, adicionamos 0.25 ao Y
-      final adjustedPosition = vector.Vector3(
+      final modelNode = ArCoreReferenceNode(
+        name: 'modelo_tap_${widget.nomeMovel}',
+        objectUrl: widget.modeloPath,
+        position: vector.Vector3(
           hitPosition.x,
-          hitPosition.y + 0.25, // Metade da altura do cubo
+          hitPosition.y,
           hitPosition.z
-      );
-
-      // Cria o nó com o cubo no ponto onde o usuário tocou (com altura ajustada)
-      final cubeNode = ArCoreNode(
-        name: 'cubo_tap_${widget.nomeMovel}',
-        shape: cube,
-        position: adjustedPosition,
+        ),
         rotation: hit.pose.rotation,
+        scale: vector.Vector3(0.1, 0.1, 0.1), // Reduzindo a escala para 0.1
       );
 
-      // Adiciona o nó à cena
-      arCoreController.addArCoreNode(cubeNode);
-
-      print('Cubo adicionado no ponto tocado, alinhado ao chão');
+      arCoreController.addArCoreNode(modelNode);
+      print('Modelo adicionado no ponto tocado');
     } catch (e) {
-      print('Erro ao adicionar cubo no ponto tocado: $e');
+      print('Erro ao adicionar modelo no ponto tocado: $e');
+      rethrow;
     }
   }
 
   @override
   void dispose() {
-    arCoreController.dispose();
+    if (isArInitialized) {
+      arCoreController.dispose();
+    }
     super.dispose();
   }
 }
