@@ -160,7 +160,7 @@ class CatalogPage extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (_) => ArViewPage(
                           modeloPath: movel['modelo'],
-                          nomeMovel: movel['nome'],
+                          modelName: movel['nome'],
                         ),
                       ),
                     );

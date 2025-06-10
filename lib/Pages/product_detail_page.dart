@@ -102,7 +102,7 @@ class ProductDetailPage extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (_) => ArViewPage(
                                     modeloPath: modeloPath!,
-                                    nomeMovel: title,
+                                    modelName: title,
                                   ),
                                 ),
                               );
